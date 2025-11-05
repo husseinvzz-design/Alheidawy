@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>نظام إدارة الحسابات والخصومات</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app" dir="rtl">
+    <header class="topbar">
+      <div class="brand">نظام إدارة الحسابات والخصومات</div>
+      <nav class="nav">
+        <button class="nav-btn" data-screen="dashboard">الرئيسية</button>
+        <button class="nav-btn" data-screen="employees">الموظفين</button>
+        <button class="nav-btn" data-screen="transactions">خصومات/مكافآت</button>
+        <button class="nav-btn" data-screen="hjarat">الحجرات</button>
+        <button id="exportBtn" class="nav-btn ghost">تصدير CSV</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <!-- Dashboard Screen -->
+      <section class="screen" id="dashboard">
+        <h2>لوحة التحكم</h2>
+        <div class="cards">
+          <div class="card">
+            <h3>إجمالي الموظفين</h3>
+            <div class="big" id="statEmps">0</div>
+          </div>
+          <div class="card">
+            <h3>الحجرات اليوم</h3>
+            <div class="small-row">
+              <div>كلي: <strong id="statHTotal">0</strong></div>
+              <div>وهمي: <strong id="statHFake">0</strong></div>
+              <div>صافي: <strong id="statHNet">0</strong></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>إجراءات سريعة</h3>
+            <div class="actions">
+              <button onclick="showScreen('employees')">إضافة موظف</button>
+              <button onclick="showScreen('transactions')">تسجيل خصم/مكافأة</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Employees Screen -->
+      <section class="screen" id="employees" style="display:none;">
+        <h2>الموظفين</h2>
+        <div class="card form-card">
+          <h3>إضافة موظف</h3>
+          <label>اسم الموظف</label>
+          <input id="empName" placeholder="مثال: احمد علي">
+          <label>رقم الهاتف (دولي بدون +)</label>
+          <input id="empPhone" placeholder="9647701234567">
+          <label>الراتب الكلي</label>
+          <input id="empSalary" type="number" placeholder="0.00">
+          <div class="form-row">
+            <button id="addEmpBtn">إضافة موظف</button>
+            <button class="ghost" onclick="clearEmpForm()">تفريغ الحقول</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>قائمة الموظفين</h3>
+          <input id="searchEmp" placeholder="ابحث بالاسم أو الهاتف..." class="search">
+          <table id="empsTable">
+            <thead><tr><th>الاسم</th><th>الهاتف</th><th>الراتب الكلي</th><th>الراتب الباقي</th><th>عمليات</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Transactions Screen -->
+      <section class="screen" id="transactions" style="display:none;">
+        <h2>الخصومات والمكافآت</h2>
+        <div class="card form-card">
+          <h3>تسجيل خصم / مكافأة</h3>
+          <label>اختر الموظف</label>
+          <select id="txEmp"></select>
+          <label>المبلغ</label>
+          <input id="txAmount" type="number">
+          <label>النوع</label>
+          <select id="txType"><option value="deduct">خصم</option><option value="reward">مكافأة</option></select>
+          <label>السبب</label>
+          <input id="txReason">
+          <div class="form-row">
+            <button id="applyTxBtn">تطبيق وتحرير WhatsApp</button>
+            <button class="ghost" onclick="clearTxForm()">تفريغ الحقول</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>سجل المعاملات (مؤخرًا)</h3>
+          <table id="txTable">
+            <thead><tr><th>التاريخ</th><th>الموظف</th><th>النوع</th><th>المبلغ</th><th>السبب</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Hjarat Screen -->
+      <section class="screen" id="hjarat" style="display:none;">
+        <h2>الحجرات اليومية</h2>
+        <div class="card form-card">
+          <h3>تعديل الحجرات لليوم</h3>
+          <label>التاريخ</label>
+          <input id="hDate" type="date">
+          <label>عدد الحجرات الكلي</label>
+          <input id="hTotal" type="number">
+          <label>عدد الحجرات الوهمي</label>
+          <input id="hFake" type="number">
+          <label>سبب الحجر الوهمي</label>
+          <input id="hReason" >
+          <div class="form-row">
+            <button id="saveHBtn">حفظ</button>
+            <button class="ghost" onclick="clearHForm()">تفريغ</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>سجل الحجرات</h3>
+          <table id="hTable">
+            <thead><tr><th>التاريخ</th><th>كلي</th><th>وهمي</th><th>صافي</th><th>السبب</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <div>تم التطوير بواسطة مساعد</div>
+      <div class="small muted">النسخة المحلية تعمل عبر LocalStorage — يمكنك رفع الملفات إلى Netlify/ GitHub Pages ثم وضع الرابط في AppsGeyser</div>
+    </footer>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
